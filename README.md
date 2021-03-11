@@ -3,6 +3,10 @@ A work in progress.
 
 Graph Based Genetic Algorithm in Julia via MolecularGraph.jl
 
+Q) Why (re)implement this in Julia?
+
+A) Performance! 🚀
+
 ## References
 
 Jensen, J. H. (2019). A graph-based genetic algorithm and generative
