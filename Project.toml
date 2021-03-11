@@ -1,0 +1,7 @@
+name = "GBGA"
+uuid = "442f9f3e-9604-445b-88d2-567bef5e8f79"
+authors = ["Jarvist Moore Frost <jarvist@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+MolecularGraph = "6c89ec66-9cd8-5372-9f91-fabc50dd27fd"
