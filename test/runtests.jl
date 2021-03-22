@@ -6,14 +6,19 @@ using MolecularGraph
 # lots of these are by reference to the tests in the Evolutionary API tests
 # https://github.com/wildart/Evolutionary.jl/blob/eff5e0a23be5186d1d46bed298c263e8cedd8ff1/test/interface.jl
 
-m=MolecularGraph.smilestomol("C")
+mol=MolecularGraph.smilestomol("C")
 
 struct TestOptimizer <: Evolutionary.AbstractOptimizer end
-mthd = TestOptimizer()
+method = TestOptimizer()
 
-pop=Evolutionary.initial_population(mthd, m)
-@test length(pop) == Evolutionary.population_size(mthd)
+import Evolutionary.population_size
+function population_size(method::TestOptimizer)
+    return 1
+end
 
-@test Evolutionary.NonDifferentiable(mthd, m)
+pop=Evolutionary.initial_population(method, mol)
+@test length(pop) == Evolutionary.population_size(method)
+
+@test Evolutionary.NonDifferentiable(method, mol)
 
 
