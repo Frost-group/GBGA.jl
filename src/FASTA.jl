@@ -108,47 +108,57 @@ function peptide_charge(sequence::String)
     return total_charge
 end
 
-#  Evolutionary.jl requires a zero function for the population type
+# Evolutionary.jl requires zero() for the element type
 #  ==> This is some dark Julia magic that I don't fully understand
-# Add Base.zero for String type to satisfy Evolutionary.jl requirements
-Base.zero(::Type{String}) = ""
-# Add Base.zero for Vector{Float64} type
-Base.zero(::Type{Vector{Float64}}) = Float64[]
 
-# Vector version of fitness function; sort of a DIY dot operator
-function peptide_fitness(population::Vector{String})
-    println("population: $population")
-    return [peptide_fitness(seq) for seq in population]
-end
+Base.zero(::Type{Char}) = '\0'
+# doing this as a null character, sort of hack around Evolutionary.jl
 
-# per sequence version of fitness function; where the complexity goes
+# Fitness function for a single sequence
 function peptide_fitness(sequence::String)
     # qudratic to +5 cation peptide
-    fitness=(peptide_charge(sequence)-5.0)^2
+
+    fitness = (peptide_charge(sequence) - 5.0)^2
     return fitness
+end
+
+# Fitness wrapper for Vector{Char} (required by Evolutionary.jl)
+peptide_fitness(seq::Vector{Char}) = peptide_fitness(String(seq))
+
+# Mutation wrapper for Vector{Char} (rng kwarg required by Evolutionary.jl)
+function mutate_peptide_vec(seq::Vector{Char}; rng=nothing)
+    collect(mutate_peptide(String(seq)))
+end
+
+# Crossover wrapper for Vector{Char} (rng kwarg required by Evolutionary.jl)
+function crossover_peptides_vec(seq1::Vector{Char}, seq2::Vector{Char}; rng=nothing)
+    o1, o2 = crossover_peptides(String(seq1), String(seq2))
+    return collect(o1), collect(o2)
 end
 
 # Main optimization function
 function peptide_optimize(sequence_length::Int;
-                         population_size::Int=10,
+                         population_size::Int=100,
                          generations::Int=10)
-    # Create initial population
-    population = [random_peptide(sequence_length) for _ in 1:population_size]
+    # Create initial population as Vector{Vector{Char}} for Evolutionary.jl compatibility
+    population = [collect(random_peptide(sequence_length)) for _ in 1:population_size]
     
-    # Define GA parameters
     ga = GA(populationSize = population_size,
-            selection = rouletteinv,
-            mutation = x -> mutate_peptide(x),
-            crossover = (x, y) -> crossover_peptides(x, y)[1],
+            selection = ranklinear(1.5),
+            mutation = mutate_peptide_vec,
+            crossover = crossover_peptides_vec,
             crossoverRate = 0.8,
             mutationRate = 0.1,
             ε = 0.05)
 
     result = Evolutionary.optimize(peptide_fitness,
-                                 population,
+                                 Evolutionary.NoConstraints(),
                                  ga,
+                                 population,
                                  Evolutionary.Options(iterations=generations))
-    
-    return Evolutionary.minimizer(result)
+   
+        @show result
+
+    return String(Evolutionary.minimizer(result))
 end
 

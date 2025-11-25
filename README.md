@@ -20,3 +20,6 @@ Genetic Algorithm and Its Application to the Multiobjective Evolution of Median
 Molecules. Journal of Chemical Information and Computer Sciences, 44(3),
 1079–1087. https://doi.org/10.1021/ci034290p
 
+AustinT's https://github.com/AustinT/mol_ga
+
+

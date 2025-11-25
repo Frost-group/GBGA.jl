@@ -15,5 +15,7 @@ function initial_population(method::M, individual::MolGraph) where {M<:Evolution
             for _ in 1:population_size(method)]
 end
 
-import Evolutionary.NonDifferentiable
-NonDifferentiable(f, x::MolGraph) = NonDifferentiable{Real,typeof(x)}(f, f(x), deepcopy(x), [0,])
+# disappeared during upstream update?
+#import Evolutionary.NonDifferentiable
+#NonDifferentiable(f, x::MolGraph) = NonDifferentiable{Real,typeof(x)}(f, f(x), deepcopy(x), [0,])
+

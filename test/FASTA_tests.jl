@@ -72,10 +72,14 @@
 
     @testset "Optimization" begin
         # Basic test to ensure optimization runs
-        result = peptide_optimize(5, generations=10)
+        result = peptide_optimize(5, generations=100)
+        
+        @show result 
+        println("Result: $result with charge $(peptide_charge(result))")
         
         # Test result properties
         @test length(result) == 5
         @test all(aa -> aa ∈ AA_ALPHABET, result)
     end
 end 
+
